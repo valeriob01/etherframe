@@ -1,0 +1,48 @@
+Copyright (c) 2007, Valerio Bellizzomi
+
+
+Etherframe
+==========
+
+License:
+--------
+Released under new BSD license.
+
+Synopsis:
+---------
+Etherframe is a simple ethernet frame receiver with bare up-level
+protocol decoding and cable statistics. The intended use is to measure
+EMI, noise, and signal attenuation in ethernet cables placed in an
+environment disturbed by magnetic fields.
+The typical monitored cables are Cat.3-4-5 or higher Cat.:
+- Unshielded Twisted Pair cables (UTP)
+- Shielded Twisted Pair cables (STP)
+- Foiled Twisted Pair cables (FTP)
+- Digital Subscriber Loop
+
+and also obsolete coaxial cables:
+- Thick Ethernet
+- Thin Ethernet (RG58-50Ohm cable)
+
+Unshielded network cables or shielded cables approaching 
+the maximum ethernet cable length, *will* be affected
+when exposed to powerful magnetic fields.
+A test setup is being constructed at the laboratory
+to inject noise along a long ethernet cable.
+
+Long DSL cables are especially affected.
+
+Platforms:
+----------
+Etherframe currently compile and run on Fedora 6 and 7.
+However, it is intended mainly as a prototype of ethernet sniffer
+to be ported to Coyotos (http://www.coyotos.org).
+
+Usage:
+------
+Since Etherframe opens a socket, and sets the eth0 interface in
+promiscuous mode, you need to be logged in as root to run the program.
+
+
+Valerio Bellizzomi,
+Tuesday 20 November 2007
