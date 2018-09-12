@@ -148,12 +148,12 @@ void frameTypeDecoder(int b) {
     if (b <= __ETH_PROTOCOL_SWITCH__) {
         // brand = 0..1500 decimal --> length field of IEEE 802.3
         // 10Mbit/sec
-        printf(", LF=0x%04x ( 10M) ", b);
+        printf(", 10M   LF=0x%04x ", b);
     }
     else {
         // brand > 1500 decimal --> type field of Ethernet II
         // 100Mbit/sec
-        printf(", TF=0x%04x (100M) ", b);
+        printf(", 1000M TF=0x%04x ", b);
     }
 } // frameTypeDecoder()
 
