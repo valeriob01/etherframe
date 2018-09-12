@@ -34,9 +34,7 @@ Long DSL cables are especially affected.
 
 Platforms:
 ----------
-Etherframe currently compile and run on Fedora 6 and 7.
-However, it is intended mainly as a prototype of ethernet sniffer
-to be ported to Coyotos (http://www.coyotos.org).
+Etherframe currently compile and run on Debian.
 
 Usage:
 ------
