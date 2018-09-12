@@ -90,6 +90,10 @@
             }
             break;
 
+        case 0x86DD:
+            printf("IPv6");
+            break;
+
         case SIGN_X75:
             printf("X.75");
             break;
