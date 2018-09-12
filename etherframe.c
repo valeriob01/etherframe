@@ -351,9 +351,9 @@ int main(int argc, char *argv[]) {
                     frameTypeDecoder(brand);
                     protocolDecoder(brand, prothead, frmbuf);
 
-                    /* Uncomment to display also packet payload data */
-//                    for (i = 0; i < (frmbytes - 1); i++) { printf("%02x ", frmbuf[i]); };
-//                    printf("\n");
+                    /* Display also packet payload data */
+                    for (i = 0; i < (frmbytes - 1); i++) { printf("%02x ", frmbuf[i]); };
+                    printf("\n");
 
                 } //if (frmbytes > __ETH_HEADER_LENGTH__)
             } //if (frmbytes > 0)
