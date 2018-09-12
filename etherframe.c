@@ -204,6 +204,11 @@ void protocolDecoder(int b, unsigned char *protohead, unsigned char fb[__ETH_FRA
             printf("IPv6");
             break;
 
+        case 0x0027:
+        /* TP++ Transport Protocol */
+            printf("TP++");
+            break;
+
         default:
             printf("FIELD=%4i", b);
             break;
