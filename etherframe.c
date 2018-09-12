@@ -45,7 +45,7 @@ Ethernet frame receiver with cable statistics.
 #include <sys/ioctl.h>
 #include <arpa/inet.h>
 #include <net/if.h>
-#include <linux/in.h>
+// #include <linux/in.h>
 #include <linux/if_ether.h>
 
 #define ETHERFRAME_VERSION "0.3"
