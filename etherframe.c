@@ -36,6 +36,7 @@ Ethernet frame receiver with cable statistics.
 
 #include <signal.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <errno.h>
 #include <unistd.h>
@@ -352,7 +353,7 @@ int main(int argc, char *argv[]) {
                     protocolDecoder(brand, prothead, frmbuf);
 
                     /* Display also packet payload data */
-                    for (i = 0; i < (frmbytes - 1); i++) { printf("%02x ", frmbuf[i]); };
+                    for (i = 0; i < (frmbytes - 1); i++) { printf("%c ", frmbuf[i]); };
                     printf("\n");
 
                 } //if (frmbytes > __ETH_HEADER_LENGTH__)
