@@ -171,7 +171,7 @@ void protocolDecoder(int b, unsigned char *protohead, unsigned char fb[__ETH_FRA
             protohead = fb + __ETH_HEADER_LENGTH__; // Skip Ethernet header
             // Double check for IPv4
             if (*protohead == __IPV4_GUARD__) {
-                // Decode DOD IP protocol
+                // Decode IP protocol
                 printf("IPv4");
                 // Display IP source address with port.
                 printf(", SRC=%d.%d.%d.%d:%d",
@@ -192,7 +192,7 @@ void protocolDecoder(int b, unsigned char *protohead, unsigned char fb[__ETH_FRA
             } // if (*protohead == __IPV4_GUARD__)
             else {
                 // Initial provision for IPv4 diagnostics
-                printf("Malformed IPv4");
+                printf("NOT IPv4 or Malformed packet");
             }
             break;
         case SIGN_ARP:
