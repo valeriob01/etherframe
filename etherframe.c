@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, Valerio Bellizzomi
+ * Copyright (c) 2018, Valerio Bellizzomi
  *
  *
  * Redistribution and use in source and binary forms, with or without
@@ -197,6 +197,11 @@ void protocolDecoder(int b, unsigned char *protohead, unsigned char fb[__ETH_FRA
         case SIGN_ARP:
         /* Address Resolution Protocol */
             printf("ARP");
+            break;
+
+        case 0x86dd:
+        /* IPv6 */
+            printf("IPv6");
             break;
 
         default:
