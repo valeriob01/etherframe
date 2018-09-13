@@ -48,7 +48,7 @@ Ethernet frame receiver with cable statistics.
 // #include <linux/in.h>
 #include <linux/if_ether.h>
 
-#define ETHERFRAME_VERSION "0.3"
+#define ETHERFRAME_VERSION "0.4-debian_mod"
 
 /* ***** INVARIANTS ***** */
 /** @brief 2048 so that we can read gigantic frames*/
@@ -73,7 +73,7 @@ Ethernet frame receiver with cable statistics.
 /* Protocol signatures */
 #include "signatures.h"
 
-/** @brief Prints eror strings*/
+/** @brief Prints error strings*/
 
 void printError(char es[160]) {
     printf("Etherframe: %s\n", es);
@@ -149,12 +149,12 @@ void frameTypeDecoder(int b) {
     if (b <= __ETH_PROTOCOL_SWITCH__) {
         // brand = 0..1500 decimal --> length field of IEEE 802.3
         // 10Mbit/sec
-        printf(", 10Mbps   LF=0x%04x ", b);
+        printf(", 10baseT   LF=0x%04x ", b);
     }
     else {
         // brand > 1500 decimal --> type field of Ethernet II
         // 100Mbit/sec
-        printf(", 1000Mbps TF=0x%04x ", b);
+        printf(", 1000baseT TF=0x%04x ", b);
     }
 } // frameTypeDecoder()
 
@@ -242,11 +242,11 @@ int main(int argc, char *argv[]) {
 
     struct ifreq ethreq;
 
-    printf("\nEtherframe Rules!\n");
-    printf("Copyright (c) 2007, Valerio Bellizzomi\n");
+    printf("Initializing Etherframe %s ...\n", ETHERFRAME_VERSION);
+    printf("Copyright (c) 2018, Valerio Bellizzomi\n");
     printf("Etherframe is free software and has NO WARRANTY. See Makefile for details.\n");
     printf("Usage: %s [eth0|eth1|eth2|eth3|lo]\n", argv[0]);
-    printf("Initializing Etherframe %s ...\n", ETHERFRAME_VERSION);
+
 
     switch (argc) {
         case 1:
