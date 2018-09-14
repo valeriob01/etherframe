@@ -1,4 +1,4 @@
-Copyright (c) 2007, Valerio Bellizzomi
+Copyright (c) 2018, Valerio Bellizzomi
 
 
 Etherframe
@@ -10,37 +10,23 @@ Released under new BSD license.
 
 Synopsis:
 ---------
-Etherframe is a simple ethernet frame receiver with bare up-level
-protocol decoding and cable statistics. The intended use is to measure
-EMI, noise, and signal attenuation in ethernet cables placed in an
-environment disturbed by magnetic fields.
-The typical monitored cables are Cat.3-4-5 or higher Cat.:
-- Unshielded Twisted Pair cables (UTP)
-- Shielded Twisted Pair cables (STP)
-- Foiled Twisted Pair cables (FTP)
-- Digital Subscriber Loop
+Etherframe is a simple ethernet frame receiver with bare up-level protocol decoding and cable statistics.
 
-and also obsolete coaxial cables:
-- Thick Ethernet
-- Thin Ethernet (RG58-50Ohm cable)
-
-Unshielded network cables or shielded cables approaching 
-the maximum ethernet cable length, *will* be affected
-when exposed to powerful magnetic fields.
-A test setup is being constructed at the laboratory
-to inject noise along a long ethernet cable.
-
-Long DSL cables are especially affected.
+The intended use is to measure EMI, noise, and signal attenuation in ethernet cables placed in an environment disturbed by strong magnetic fields, but can also be used as a normal network sniffer.
+Typically the used cables are Cat.3-4-5 or higher Cat.:
 
 Platforms:
 ----------
 Etherframe currently compile and run on Debian.
 
+The listeth program displays a list of network interface names.
 Usage:
 ------
-Since Etherframe opens a socket, and sets the eth0 interface in
-promiscuous mode, you need to be logged in as root to run the program.
+./listeth
 
+You need to be logged in as root to run the program.
+Usage:
+------
+./etherframe [<interface name>] [<promiscuous mode>]
 
-Valerio Bellizzomi,
-Tuesday 20 November 2007
+Where <interface name> is a name from the listeth listing, and <promiscuous mode> is 0=disables, 1=enabled.
