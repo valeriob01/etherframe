@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2007, Valerio Bellizzomi
+# Copyright (c) 2018, Valerio Bellizzomi
 #
 #
 # Redistribution and use in source and binary forms, with or without
@@ -38,7 +38,6 @@ BUILDDIR=.
 default: package
 
 SOURCES=etherframe.c
-#TARGETS=$(BUILDDIR)/etherframe
 TARGETS=etherframe
 
 # Package version support
@@ -58,7 +57,6 @@ clean:
 	rm -f $(TARGETS)
 	rm -f $(BUILDDIR)/html/*
 	rm -f $(TARGETS).tgz
-#	rm -f $(BUILDDIR)/tip.txt
 	rm -f $(TARGETS)-$(VERSION).tgz
 
 sanify:
@@ -69,9 +67,7 @@ docs:
 
 tar:	clean sanify
 	-rm -f $(TARGETS).tar $(TARGETS).tar.gz
-#	hg export tip > tip.txt
 	tar cvf $(TARGETS).tar $(BUILDDIR)/*
-#	tar cvf $(TARGETS).tar $(BUILDDIR)/Makefile $(BUILDDIR)/$(SOURCES) $(BUILDDIR)/cases.c $(BUILDDIR)/signatures.h $(BUILDDIR)/README $(BUILDDIR)/changelog.txt $(BUILDDIR)/.hgignore $(BUILDDIR)/tip.txt
 	gzip $(TARGETS).tar
 	mv $(TARGETS).tar.gz $(TARGETS)-$(VERSION).tgz
 
