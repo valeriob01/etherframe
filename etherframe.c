@@ -117,7 +117,7 @@ int set_ethPromisc(char net[4], struct ifreq ethr, int sck, int mode) {
                     return (-1);
                 }
             }
-            printf("Promiscuous mode disabled.");
+            printf("Promiscuous mode disabled.\n");
             return (0);
             break;
 
@@ -257,7 +257,7 @@ int main(int argc, char *argv[]) {
             break;
         case 3:
             interface = argv[1];
-            promisc_mode = argv[2];
+            promisc_mode = atoi(argv[2]);
             break;
 
     }
