@@ -239,7 +239,7 @@ int main(int argc, char *argv[]) {
     float LOST_COP = __MIN_COP__;   // Missing COP. Assume we have a good line
     int i = 0;
     char *interface = "eth0";
-
+    int promisc_mode = 1;
     struct ifreq ethreq;
 
     printf("Initializing Etherframe %s ...\n", ETHERFRAME_VERSION);
@@ -255,6 +255,11 @@ int main(int argc, char *argv[]) {
         case 2:
             interface = argv[1];
             break;
+        case 3:
+            interface = argv[1];
+            promisc_mode = argv[2];
+            break;
+
     }
 
         /* Setup section */
@@ -278,7 +283,7 @@ int main(int argc, char *argv[]) {
 
         // Open socket in promisc. mode.
         // Topmost error processing.
-        switch (set_ethPromisc(interface, ethreq, sock, ENABLE_PROMISC)) {
+        switch (set_ethPromisc(interface, ethreq, sock, promisc_mode)) {
             case 0:
                 printf("Ready.\n");
                 break;
