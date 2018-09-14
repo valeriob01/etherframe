@@ -164,7 +164,6 @@ void frameTypeDecoder(int b) {
 // This is faster.
 void protocolDecoder(int b, unsigned char *protohead, unsigned char fb[__ETH_FRAME_LENGTH__]) {
     switch(b) {
-/* #include "cases.c"*/
         case SIGN_IPV4:
             // OPEN ISSUE 1: Make the routine portable, or optimize for space.
             // OPEN ISSUE 2: Move the following line out in the main()
