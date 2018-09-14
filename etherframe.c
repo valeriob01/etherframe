@@ -48,7 +48,7 @@ Ethernet frame receiver with cable statistics.
 // #include <linux/in.h>
 #include <linux/if_ether.h>
 
-#define ETHERFRAME_VERSION "0.4-debian_mod"
+#define ETHERFRAME_VERSION "0.5"
 
 /* ***** INVARIANTS ***** */
 /** @brief 2048 so that we can read gigantic frames*/
@@ -108,7 +108,7 @@ int set_ethPromisc(char net[4], struct ifreq ethr, int sck, int mode) {
                 printError("Error in set_ethPromisc ioctl(SIOCGIFFLAGS) while selecting interface.");
                 return (-1);
             }
-            printf("Selected interface %s\n", net);
+            printf("Selecting interface %s\n", net);
 
             if (ethr.ifr_flags & IFF_PROMISC) {
                 ethr.ifr_flags ^= IFF_PROMISC;
@@ -244,13 +244,13 @@ int main(int argc, char *argv[]) {
 
     printf("Initializing Etherframe %s ...\n", ETHERFRAME_VERSION);
     printf("Copyright (c) 2018, Valerio Bellizzomi\n");
-    printf("Etherframe is free software and has NO WARRANTY. See Makefile for details.\n");
+    printf("Etherframe is free software and comes with ABSOLUTELY NO WARRANTY. See Makefile for details.\n");
     printf("Usage: %s [eth0|eth1|eth2|eth3|lo]\n", argv[0]);
 
 
     switch (argc) {
         case 1:
-            printf("Defaulting to %s\n", interface);
+            printf("Selecting default interface %s\n", interface);
             break;
         case 2:
             interface = argv[1];
@@ -351,7 +351,7 @@ int main(int argc, char *argv[]) {
                     /*
                 Field mode :
                     <= 1500 decimal = length field = IEEE 802.3 = 10Mbps,
-                    > 1500 decimal = type field = Ethernet II = 100Mbps.
+                    > 1500 decimal = type field = Ethernet II = 100Mbps/1000Mbps.
                 */
 
                     frameTypeDecoder(brand);
