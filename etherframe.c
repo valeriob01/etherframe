@@ -51,8 +51,8 @@ Ethernet frame receiver with cable statistics.
 #define ETHERFRAME_VERSION "0.5"
 
 /* ***** INVARIANTS ***** */
-/** @brief 2048 so that we can read gigantic frames*/
-#define __ETH_FRAME_LENGTH__        2048
+/** @brief 1500 is the max length. 2048 gigantic frames ar rarely used*/
+#define __ETH_FRAME_LENGTH__        1500
 /** @brief Ethernet header length*/
 #define __ETH_HEADER_LENGTH__       14
 /** @brief Mark for 10/100 MBit switch*/
