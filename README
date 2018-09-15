@@ -10,9 +10,9 @@ Released under new BSD license.
 
 Synopsis:
 ---------
-Etherframe is a simple ethernet frame receiver with bare up-level protocol decoding and cable statistics.
+Etherframe is a simple ethernet frame receiver with bare up-level protocol decoding and statistics.
 
-The intended use is to measure EMI, noise, and signal attenuation in ethernet cables placed in an environment disturbed by strong magnetic fields, but can also be used as a normal network sniffer.
+The intended use is to acquire a hint on how much EMI noise is present when ethernet cables are placed in an environment disturbed by strong magnetic fields, but can also be used as a normal network sniffer.
 Typically the used cables are Cat.3-4-5 or higher Cat.:
 
 Platforms:
@@ -29,4 +29,4 @@ Usage:
 ------
 ./etherframe [<interface name>] [<promiscuous mode>]
 
-Where <interface name> is a name from the listeth listing, and <promiscuous mode> is 0=disables, 1=enabled.
+Where <interface name> is a name from the listeth listing, and <promiscuous mode> is 0=disabled, 1=enabled.
