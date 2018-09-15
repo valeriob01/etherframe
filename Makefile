@@ -35,7 +35,7 @@ CC=gcc
 CFLAGS=
 BUILDDIR=.
 
-default: package
+default: etherframe
 
 SOURCES=etherframe.c
 TARGETS=etherframe
@@ -43,7 +43,7 @@ TARGETS=etherframe
 # Package version support
 VERSION=0.5
 
-package:
+etherframe:
 	$(CC) $(CFLAGS) -o $(TARGETS) $(BUILDDIR)/$(SOURCES)
 
 install:
@@ -52,6 +52,9 @@ install:
 	  mkdir $(HOME)/bin;
 	fi;
 	cp $(TARGETS) $(HOME)/bin/$(TARGETS)
+
+listnet:
+	$(CC) $(CFLAGS) -o listnet $(BUILDDIR)/listnet.c
 
 clean:
 	rm -f $(TARGETS)
