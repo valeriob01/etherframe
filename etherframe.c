@@ -30,7 +30,7 @@
 
 /** @page main Etherframe
 
-Ethernet frame receiver with cable statistics.
+Ethernet frame receiver with statistics. Supports the Preventive Maintenance Model.
 
 */
 
@@ -369,7 +369,7 @@ int main(int argc, char *argv[]) {
             CUR_COP = (complfrm + 1) / (totfrm + 1);
             LOST_COP = (incomplfrm + 1) / (totfrm + 1);
 
-            // Display full statistics report
+            // Display full statistics report. Introduced for support of Preventive Maintenance Model.
             if (CUR_COP >= __DEFAULT_ROP__) {
                 printf("  T=%i C=%i I=%i COP=%08f LOST=%08f ROP=%08f\n", totfrm, complfrm, incomplfrm, CUR_COP, LOST_COP, __DEFAULT_ROP__);
             }
@@ -392,3 +392,4 @@ void sigproc()
 //    close(sock);
 }
 #endif
+
