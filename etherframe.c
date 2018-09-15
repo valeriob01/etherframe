@@ -55,7 +55,7 @@ Ethernet frame receiver with cable statistics.
 #define __ETH_FRAME_LENGTH__        1500
 /** @brief Ethernet header length*/
 #define __ETH_HEADER_LENGTH__       14
-/** @brief Mark for 10/100 MBit switch*/
+/** @brief Mark for 10/100/1000 MBit switch*/
 #define __ETH_PROTOCOL_SWITCH__     0x05DC
 /** @brief IPv4 guard value*/
 #define __IPV4_GUARD__              0x45
