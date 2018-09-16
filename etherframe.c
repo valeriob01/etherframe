@@ -52,7 +52,7 @@ Ethernet frame receiver with statistics. Supports the Preventive Maintenance Mod
 
 /* ***** INVARIANTS ***** */
 /** @brief 1500 is the max length. 2048 gigantic frames are rarely used*/
-#define ETH_FRAME_LENGTH 1500
+#define ETH_FRAME_LENGTH 1504
 /** @brief Ethernet header length*/
 #define ETH_HEADER_LENGTH 14
 #define IP_HEADER_POS 35
@@ -133,6 +133,16 @@ int set_ethPromisc(char net[4], struct ifreq ethr, int sck, int mode) {
 
     } //switch
 } //set_ethPromisc()
+
+
+/** @brief Check FCS */
+void fcsDecoder(unsigned char fb[ETH_FRAME_LENGTH]) {
+    char ffb = fb[1501]+fb[1502]+fb[1503]+fb[1504];
+    
+    if (atoi(ffb) == 0xC704DD7B) { printf(" OK ");}
+    else { printf(" EE ");};
+
+}
 
 
 /** @brief Decode MAC addresses*/
@@ -270,14 +280,6 @@ int main(int argc, char *argv[]) {
 
         /* Setup section */
 
-#if 0
-    /** @brief Signal Handlers */
-        signal(SIGHUP, &sigproc);
-        signal(SIGINT, &sigproc);
-        signal(SIGQUIT, &sigproc);
-        signal(SIGTERM, &sigproc);
-#endif
-
         // open raw socket for all eth frames
         if ((sock = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ALL))) < 0) {
             printError("Cannot open socket.");
@@ -361,7 +363,7 @@ int main(int argc, char *argv[]) {
                     <= 1500 decimal = length field = IEEE 802.3 = 10Mbps,
                     > 1500 decimal = type field = Ethernet II = 100Mbps/1000Mbps.
                 */
-
+                    fcsDecoder(frmbuf);
                     frameTypeDecoder(brand);
                     protocolDecoder(brand, prothead, frmbuf);
 
