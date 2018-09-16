@@ -51,10 +51,16 @@ Ethernet frame receiver with statistics. Supports the Preventive Maintenance Mod
 #define ETHERFRAME_VERSION "0.5"
 
 /* ***** INVARIANTS ***** */
-/** @brief 1500 is the max length. 2048 gigantic frames ar rarely used*/
-#define __ETH_FRAME_LENGTH__        1500
+/** @brief 1500 is the max length. 2048 gigantic frames are rarely used*/
+#define ETH_FRAME_LENGTH 1500
 /** @brief Ethernet header length*/
-#define __ETH_HEADER_LENGTH__       14
+#define ETH_HEADER_LENGTH 14
+#define IP_HEADER_POS 35
+#define TCPUDP_HEADER_POS 44
+//the magic number or CRC32 residue, is 0xC704DD7B.
+#define FCS_LENGTH 4
+
+
 /** @brief Mark for 10/100/1000 MBit switch*/
 #define __ETH_PROTOCOL_SWITCH__     0x05DC
 /** @brief IPv4 guard value*/
@@ -160,14 +166,14 @@ void frameTypeDecoder(int b) {
 
 
 /** @brief Bare protocol decoder*/
-// WARNING: Reduced version with only IPv4 and ARP diagnostics.
-// This is faster.
-void protocolDecoder(int b, unsigned char *protohead, unsigned char fb[__ETH_FRAME_LENGTH__]) {
+// WARNING: Version with IPv4, ARP and other protocol decoding.
+
+void protocolDecoder(int b, unsigned char *protohead, unsigned char fb[ETH_FRAME_LENGTH]) {
     switch(b) {
         case SIGN_IPV4:
             // OPEN ISSUE 1: Make the routine portable, or optimize for space.
             // OPEN ISSUE 2: Move the following line out in the main()
-            protohead = fb + __ETH_HEADER_LENGTH__; // Skip Ethernet header
+            protohead = fb + ETH_HEADER_LENGTH; // Skip Ethernet header
             // Double check for IPv4
             if (*protohead == __IPV4_GUARD__) {
                 // Decode IP protocol
@@ -227,7 +233,7 @@ int main(int argc, char *argv[]) {
 
     /* Declare and initialize variables */
     unsigned char *ethhead, *prothead;
-    unsigned char frmbuf[__ETH_FRAME_LENGTH__];
+    unsigned char frmbuf[ETH_FRAME_LENGTH];
     int brand = 0;
     int sock = 0;
     int frmbytes = 0;           // Number of bytes in a frame
@@ -299,48 +305,50 @@ int main(int argc, char *argv[]) {
 
         /** @brief Main loop */
         while (1) {
-            frmbytes = recvfrom(sock, frmbuf, __ETH_FRAME_LENGTH__, 0, NULL, NULL);
-
-            if (frmbytes > 0) {
-                totfrm = totfrm + 1;   // increment total frame count
+            frmbytes = recvfrom(sock, frmbuf, ETH_FRAME_LENGTH, 0, NULL, NULL);
 
                 /*
                 CHECK TO SEE IF THE FRAME CONTAINS AT LEAST COMPLETE HEADERS:
                     * (a) Ethernet (14 bytes), pos 1-14,
-                    * (b) IP (20 bytes), pos 15-35, etc.
+                    * (b) IP (20 bytes), pos 15-35.
                     * (c) TCP/UDP/etc. (8 bytes), pos 36-44.
-            */
+                    * (d) Frame Check Sequence (2 bytes), pos 45-46.
+               */
 
-                /* INCOMPLETE FRAME */
-                if (frmbytes <= __ETH_HEADER_LENGTH__) {
+
+
+            if (frmbytes > 0) {
+                totfrm = totfrm + 1;   // increment total frame count
+
+                /* INCOMPLETE ETHERNET FRAME */
+                if (frmbytes <= ETH_HEADER_LENGTH) {
                     // we have received an incomplete frame header.
                     incomplfrm = incomplfrm + 1;
 
                     // Print all raw data from incomplete frames.
 
                     /* INCOMPLETE HEADER */
-                    if (frmbytes < __ETH_HEADER_LENGTH__) {
-                        printf(" INCOMPL FRM (ERRNO=%05i) (FB=%i) (DATA=", errno, frmbytes);
+                    if (frmbytes < ETH_HEADER_LENGTH) {
+                        printf(" INCOMPL ETH FRM (ERRNO=%05i) (FB=%i) (DATA=", errno, frmbytes);
 
                         for (i = 0; i < (frmbytes - 1); i++) { printf("%02x ", frmbuf[i]); };
                         printf(")\n");
                     }
 
-                    /* COMPLETE HEADER AND EMPTY PAYLOAD */
-                    /*  Don't know if is correct to consider
-                    this an incomplete frame, but for the moment.. */
-                    if (frmbytes == __ETH_HEADER_LENGTH__) {
-                        printf(" COMPL HDR -NO PAYLOAD- (ERRNO=%05i) (FB=%i) (DATA=", errno, frmbytes);
+                    /* COMPLETE ETHERNET HEADER AND EMPTY PAYLOAD */
+                    /*  The minimum packet length should be 46 if there are incapsulated protocols */
+                    if (frmbytes == ETH_HEADER_LENGTH) {
+                        printf(" COMPL ETH HDR -NO PAYLOAD- (ERRNO=%05i) (FB=%i) (DATA=", errno, frmbytes);
 
                         for (i = 0; i < (frmbytes - 1); i++) { printf("%02x ", frmbuf[i]); };
                         printf(")\n");
                     }
 
-                } //if (frmbytes < __ETH_HEADER_LENGTH__)
+                } //if (frmbytes < ETH_HEADER_LENGTH)
 
 
                 /* COMPLETE FRAME WITH PAYLOAD */
-                if (frmbytes > __ETH_HEADER_LENGTH__) {
+                if (frmbytes > ETH_HEADER_LENGTH) {
                     complfrm = complfrm + 1;
                     ethhead = frmbuf;
                     macDecoder(ethhead);
@@ -361,7 +369,7 @@ int main(int argc, char *argv[]) {
                     for (i = 0; i < (frmbytes - 1); i++) { printf("%c ", frmbuf[i]); };
                     printf("\n");
 
-                } //if (frmbytes > __ETH_HEADER_LENGTH__)
+                } //if (frmbytes > ETH_HEADER_LENGTH)
             } //if (frmbytes > 0)
 
             // Provision for cable diagnostics: Compute frame statistics
@@ -378,18 +386,6 @@ int main(int argc, char *argv[]) {
             }
 
 
-        } //while (1)
-
-    return (0);
-    // We never return in any case.
-
-} //main
-
-#if 0
-void sigproc()
-{
-    printf("Closing\n");
-//    close(sock);
+        }
 }
-#endif
 
