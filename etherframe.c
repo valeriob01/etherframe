@@ -52,7 +52,7 @@ Ethernet frame receiver with statistics. Supports the Preventive Maintenance Mod
 
 /* ***** INVARIANTS ***** */
 /** @brief 1500 is the max length. 2048 gigantic frames are rarely used*/
-#define ETH_FRAME_LENGTH 1504
+#define ETH_FRAME_LENGTH 1500
 /** @brief Ethernet header length*/
 #define ETH_HEADER_LENGTH 14
 #define IP_HEADER_POS 35
