@@ -136,13 +136,14 @@ int set_ethPromisc(char net[4], struct ifreq ethr, int sck, int mode) {
 
 
 /** @brief Check FCS */
-void fcsDecoder(unsigned char fb[ETH_FRAME_LENGTH]) {
-    char ffb = fb[1501]+fb[1502]+fb[1503]+fb[1504];
-    
-    if (atoi(ffb) == 0xC704DD7B) { printf(" OK ");}
-    else { printf(" EE ");};
-
-}
+// Wrong method
+//void fcsDecoder(unsigned char fb[ETH_FRAME_LENGTH]) {
+//    char ffb = fb[1501]+fb[1502]+fb[1503]+fb[1504];
+//    
+//    if (atoi(ffb) == 0xC704DD7B) { printf(" OK ");}
+//    else { printf(" EE ");};
+//
+//}
 
 
 /** @brief Decode MAC addresses*/
@@ -363,7 +364,7 @@ int main(int argc, char *argv[]) {
                     <= 1500 decimal = length field = IEEE 802.3 = 10Mbps,
                     > 1500 decimal = type field = Ethernet II = 100Mbps/1000Mbps.
                 */
-                    fcsDecoder(frmbuf);
+//                    fcsDecoder(frmbuf);
                     frameTypeDecoder(brand);
                     protocolDecoder(brand, prothead, frmbuf);
 
