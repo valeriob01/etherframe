@@ -155,12 +155,12 @@ void frameTypeDecoder(int b) {
     if (b <= __ETH_PROTOCOL_SWITCH__) {
         // brand = 0..1500 decimal --> length field of IEEE 802.3
         // 10Mbit/sec
-        printf(", 10baseT   LF=0x%04x ", b);
+        printf("10baseT   LF=0x%04x ", b);
     }
     else {
         // brand > 1500 decimal --> type field of Ethernet II
         // 100Mbit/sec
-        printf(", 1000baseT TF=0x%04x ", b);
+        printf("1000baseT TF=0x%04x ", b);
     }
 } // frameTypeDecoder()
 
@@ -223,10 +223,6 @@ void protocolDecoder(int b, unsigned char *protohead, unsigned char fb[ETH_FRAME
     printf("\n");
 } //protocolDecoder()
 
-
-#if 0
-void sigproc();
-#endif
 
 /** @brief Main*/
 int main(int argc, char *argv[]) {
@@ -353,7 +349,7 @@ int main(int argc, char *argv[]) {
                     <= 1500 decimal = length field = IEEE 802.3 = 10Mbps,
                     > 1500 decimal = type field = Ethernet II = 100Mbps/1000Mbps.
                 */
-                    protocolDecoder(brand, prothead, frmbuf);
+                    
 
                     /* Display also packet payload data */
                     for (i = 0; i < (frmbytes - 1); i++) { printf("%c ", frmbuf[i]); };
@@ -370,10 +366,12 @@ int main(int argc, char *argv[]) {
             // Display full statistics report. Introduced for support of Preventive Maintenance Model.
             if (CUR_COP >= __DEFAULT_ROP__) {
                 frameTypeDecoder(brand);
+                protocolDecoder(brand, prothead, frmbuf);
                 printf("  FB=%i T=%i C=%i I=%i COP=%08f LOST=%08f ROP=%08f\n", frmbytes, totfrm, complfrm, incomplfrm, CUR_COP, LOST_COP, __DEFAULT_ROP__);
             }
             else {
                 frameTypeDecoder(brand);
+                protocolDecoder(brand, prothead, frmbuf);
                 printf("  FB=%i T=%i C=%i I=%i COP=%08f LOST=%08f ROP=%08f *NO-ROP*\n", frmbytes, totfrm, complfrm, incomplfrm, CUR_COP, LOST_COP, __DEFAULT_ROP__);
             }
 
