@@ -135,17 +135,6 @@ int set_ethPromisc(char net[4], struct ifreq ethr, int sck, int mode) {
 } //set_ethPromisc()
 
 
-/** @brief Check FCS */
-// Wrong method
-//void fcsDecoder(unsigned char fb[ETH_FRAME_LENGTH]) {
-//    char ffb = fb[1501]+fb[1502]+fb[1503]+fb[1504];
-//    
-//    if (atoi(ffb) == 0xC704DD7B) { printf(" OK ");}
-//    else { printf(" EE ");};
-//
-//}
-
-
 /** @brief Decode MAC addresses*/
 void macDecoder(unsigned char *etherhead) {
 
