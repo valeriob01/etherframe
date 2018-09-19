@@ -355,7 +355,7 @@ int main(int argc, char *argv[]) {
                     complfrm = complfrm + 1;
                     ethhead = frmbuf;
                     macDecoder(ethhead);
-                    printf(", FB=%i", frmbytes);
+//                    printf(", FB=%i", frmbytes);
                     brand = (ethhead[12]<<8) + ethhead[13]; // length field or type field
                     // (ethhead[12]<<8)+ethhead[13] is the field.
 
@@ -382,10 +382,10 @@ int main(int argc, char *argv[]) {
 
             // Display full statistics report. Introduced for support of Preventive Maintenance Model.
             if (CUR_COP >= __DEFAULT_ROP__) {
-                printf("  B=%i T=%i C=%i I=%i COP=%08f LOST=%08f ROP=%08f\n", frmbytes, totfrm, complfrm, incomplfrm, CUR_COP, LOST_COP, __DEFAULT_ROP__);
+                printf("  FB=%i T=%i C=%i I=%i COP=%08f LOST=%08f ROP=%08f\n", frmbytes, totfrm, complfrm, incomplfrm, CUR_COP, LOST_COP, __DEFAULT_ROP__);
             }
             else {
-                printf("  B=%i T=%i C=%i I=%i COP=%08f LOST=%08f ROP=%08f *NO-ROP*\n", frmbytes, totfrm, complfrm, incomplfrm, CUR_COP, LOST_COP, __DEFAULT_ROP__);
+                printf("  FB=%i T=%i C=%i I=%i COP=%08f LOST=%08f ROP=%08f *NO-ROP*\n", frmbytes, totfrm, complfrm, incomplfrm, CUR_COP, LOST_COP, __DEFAULT_ROP__);
             }
 
 
