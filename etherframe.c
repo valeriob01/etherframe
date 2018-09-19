@@ -308,7 +308,7 @@ int main(int argc, char *argv[]) {
 
         /** @brief Main loop */
         while (1) {
-            frmbytes = recvfrom(sock, frmbuf, ETH_FRAME_LENGTH, MSG_TRUNK, NULL, NULL);
+            frmbytes = recvfrom(sock, frmbuf, ETH_FRAME_LENGTH, MSG_TRUNC, NULL, NULL);
 
                 /*
                 CHECK TO SEE IF THE FRAME CONTAINS AT LEAST COMPLETE HEADERS:
