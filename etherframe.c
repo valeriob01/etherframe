@@ -144,7 +144,7 @@ void macDecoder(unsigned char *etherhead) {
         etherhead[0],etherhead[1],etherhead[2],
         etherhead[3],etherhead[4],etherhead[5]);
 // - source MAC address
-    printf(", sMAC=%02x:%02x:%02x:%02x:%02x:%02x",
+    printf(", sMAC=%02x:%02x:%02x:%02x:%02x:%02x\n",
         etherhead[6],etherhead[7],etherhead[8],
         etherhead[9],etherhead[10],etherhead[11]);
 } // macDecoder()
