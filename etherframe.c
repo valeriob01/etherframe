@@ -353,8 +353,6 @@ int main(int argc, char *argv[]) {
                     <= 1500 decimal = length field = IEEE 802.3 = 10Mbps,
                     > 1500 decimal = type field = Ethernet II = 100Mbps/1000Mbps.
                 */
-//                    fcsDecoder(frmbuf);
-                    frameTypeDecoder(brand);
                     protocolDecoder(brand, prothead, frmbuf);
 
                     /* Display also packet payload data */
@@ -371,9 +369,11 @@ int main(int argc, char *argv[]) {
 
             // Display full statistics report. Introduced for support of Preventive Maintenance Model.
             if (CUR_COP >= __DEFAULT_ROP__) {
+                frameTypeDecoder(brand);
                 printf("  FB=%i T=%i C=%i I=%i COP=%08f LOST=%08f ROP=%08f\n", frmbytes, totfrm, complfrm, incomplfrm, CUR_COP, LOST_COP, __DEFAULT_ROP__);
             }
             else {
+                frameTypeDecoder(brand);
                 printf("  FB=%i T=%i C=%i I=%i COP=%08f LOST=%08f ROP=%08f *NO-ROP*\n", frmbytes, totfrm, complfrm, incomplfrm, CUR_COP, LOST_COP, __DEFAULT_ROP__);
             }
 
