@@ -315,7 +315,7 @@ int main(int argc, char *argv[]) {
                     * (a) Ethernet (14 bytes), pos 1-14,
                     * (b) IP (20 bytes), pos 15-35.
                     * (c) TCP/UDP/etc. (8 bytes), pos 36-44.
-                    * (d) Frame Check Sequence (2 bytes), pos 45-46.
+                    * (d) Frame Check Sequence (4 bytes), pos 45-48.
                */
 
 
