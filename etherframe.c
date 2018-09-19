@@ -220,7 +220,7 @@ void protocolDecoder(int b, unsigned char *protohead, unsigned char fb[ETH_FRAME
             break;
     }
 
-    printf("\n");
+//    printf("\n");
 } //protocolDecoder()
 
 
