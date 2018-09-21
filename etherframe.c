@@ -87,7 +87,7 @@ void printError(char es[160]) {
 
 
 /** @brief Set NIC mode*/
-int set_ethPromisc(char net[4], struct ifreq ethr, int sck, int mode) {
+int set_ethPromisc(char net[8], struct ifreq ethr, int sck, int mode) {
     switch (mode) {
         case ENABLE_PROMISC:
             strncpy(ethr.ifr_name, net, IFNAMSIZ);
@@ -114,7 +114,7 @@ int set_ethPromisc(char net[4], struct ifreq ethr, int sck, int mode) {
                 printError("Error in set_ethPromisc ioctl(SIOCGIFFLAGS) while selecting interface.");
                 return (-1);
             }
-            printf("Selecting interface %s\n", net);
+            printf("Selected interface %s\n", net);
 
             if (ethr.ifr_flags & IFF_PROMISC) {
                 ethr.ifr_flags ^= IFF_PROMISC;
@@ -135,6 +135,19 @@ int set_ethPromisc(char net[4], struct ifreq ethr, int sck, int mode) {
 } //set_ethPromisc()
 
 
+/** @brief Check FCS */
+void fcsDecoder(char fb[], int n) {
+
+    char ffb[4] = "";
+    strncat(ffb, &fb[n-4], 4);
+//    strcat(ffb, fb[n-2]);
+//    strcat(ffb, fb[n-1]);
+//    strcat(ffb, fb[n]);
+    printf("FCS=%04x", ffb);
+}
+
+
+
 /** @brief Decode MAC addresses*/
 void macDecoder(unsigned char *etherhead) {
 
@@ -144,7 +157,7 @@ void macDecoder(unsigned char *etherhead) {
         etherhead[0],etherhead[1],etherhead[2],
         etherhead[3],etherhead[4],etherhead[5]);
 // - source MAC address
-    printf(", sMAC=%02x:%02x:%02x:%02x:%02x:%02x\n",
+    printf(", sMAC=%02x:%02x:%02x:%02x:%02x:%02x",
         etherhead[6],etherhead[7],etherhead[8],
         etherhead[9],etherhead[10],etherhead[11]);
 } // macDecoder()
@@ -155,12 +168,12 @@ void frameTypeDecoder(int b) {
     if (b <= __ETH_PROTOCOL_SWITCH__) {
         // brand = 0..1500 decimal --> length field of IEEE 802.3
         // 10Mbit/sec
-        printf("10baseT   LF=0x%04x ", b);
+        printf(", 10baseT   LF=0x%04x ", b);
     }
     else {
         // brand > 1500 decimal --> type field of Ethernet II
         // 100Mbit/sec
-        printf("1000baseT TF=0x%04x ", b);
+        printf(", 1000baseT TF=0x%04x ", b);
     }
 } // frameTypeDecoder()
 
@@ -220,9 +233,13 @@ void protocolDecoder(int b, unsigned char *protohead, unsigned char fb[ETH_FRAME
             break;
     }
 
-//    printf("\n");
+    printf("\n");
 } //protocolDecoder()
 
+
+#if 0
+void sigproc();
+#endif
 
 /** @brief Main*/
 int main(int argc, char *argv[]) {
@@ -293,14 +310,14 @@ int main(int argc, char *argv[]) {
 
         /** @brief Main loop */
         while (1) {
-            frmbytes = recvfrom(sock, frmbuf, ETH_FRAME_LENGTH, MSG_TRUNC, NULL, NULL);
+            frmbytes = recvfrom(sock, frmbuf, ETH_FRAME_LENGTH, 0, NULL, NULL);
 
                 /*
                 CHECK TO SEE IF THE FRAME CONTAINS AT LEAST COMPLETE HEADERS:
                     * (a) Ethernet (14 bytes), pos 1-14,
                     * (b) IP (20 bytes), pos 15-35.
                     * (c) TCP/UDP/etc. (8 bytes), pos 36-44.
-                    * (d) Frame Check Sequence (4 bytes), pos 45-48.
+                    * (d) Frame Check Sequence (2 bytes), pos 45-46.
                */
 
 
@@ -340,7 +357,7 @@ int main(int argc, char *argv[]) {
                     complfrm = complfrm + 1;
                     ethhead = frmbuf;
                     macDecoder(ethhead);
-//                    printf(", FB=%i", frmbytes);
+                    printf(", FB=%i", frmbytes);
                     brand = (ethhead[12]<<8) + ethhead[13]; // length field or type field
                     // (ethhead[12]<<8)+ethhead[13] is the field.
 
@@ -349,10 +366,12 @@ int main(int argc, char *argv[]) {
                     <= 1500 decimal = length field = IEEE 802.3 = 10Mbps,
                     > 1500 decimal = type field = Ethernet II = 100Mbps/1000Mbps.
                 */
-                    
+                    fcsDecoder(frmbuf,frmbytes);
+                    frameTypeDecoder(brand);
+                    protocolDecoder(brand, prothead, frmbuf);
 
                     /* Display also packet payload data */
-                    for (i = 0; i < (frmbytes - 1); i++) { printf("%c ", frmbuf[i]); };
+                    for (i = 0; i < (frmbytes - 1); i++) { printf("%02x ", frmbuf[i]); };
                     printf("\n");
 
                 } //if (frmbytes > ETH_HEADER_LENGTH)
@@ -365,14 +384,10 @@ int main(int argc, char *argv[]) {
 
             // Display full statistics report. Introduced for support of Preventive Maintenance Model.
             if (CUR_COP >= __DEFAULT_ROP__) {
-                frameTypeDecoder(brand);
-                protocolDecoder(brand, prothead, frmbuf);
-                printf("  FB=%i T=%i C=%i I=%i COP=%08f LOST=%08f ROP=%08f\n", frmbytes, totfrm, complfrm, incomplfrm, CUR_COP, LOST_COP, __DEFAULT_ROP__);
+                printf("  T=%i C=%i I=%i COP=%08f LOST=%08f ROP=%08f\n", totfrm, complfrm, incomplfrm, CUR_COP, LOST_COP, __DEFAULT_ROP__);
             }
             else {
-                frameTypeDecoder(brand);
-                protocolDecoder(brand, prothead, frmbuf);
-                printf("  FB=%i T=%i C=%i I=%i COP=%08f LOST=%08f ROP=%08f *NO-ROP*\n", frmbytes, totfrm, complfrm, incomplfrm, CUR_COP, LOST_COP, __DEFAULT_ROP__);
+                printf("  T=%i C=%i I=%i COP=%08f LOST=%08f ROP=%08f *NO-ROP*\n", totfrm, complfrm, incomplfrm, CUR_COP, LOST_COP, __DEFAULT_ROP__);
             }
 
 
