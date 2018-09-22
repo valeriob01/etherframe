@@ -1,4 +1,5 @@
 DISCLAIMER: IT IS ADVISED TO NOT USE THIS PROGRAM YET AS IT IS WORK IN PROGRESS.
+THIS PROGRAM IS BEST USED IN CONJUCTION WITH THE "ETHTOOL" PROGRAM WHICH PROVIDES MEANS TO MANIPULATE NIC FEATURES.
 
 Copyright (c) 2018, Valerio Bellizzomi
 
@@ -21,14 +22,14 @@ Platforms:
 ----------
 Etherframe currently compile and run on Debian.
 
-The listeth program displays a list of network interface names.
+The listnet program displays a list of network interface names.
 Usage:
 ------
-./listeth
+./listnet
 
 You need to be logged in as root to run the program.
 Usage:
 ------
 ./etherframe [<interface name>] [<promiscuous mode>]
 
-Where <interface name> is a name from the listeth listing, and <promiscuous mode> is 0=disabled, 1=enabled.
+Where <interface name> is a name from the listnet listing, and <promiscuous mode> is 0=disabled, 1=enabled.
