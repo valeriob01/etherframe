@@ -51,13 +51,12 @@ Ethernet frame receiver with statistics. Supports the Preventive Maintenance Mod
 #define ETHERFRAME_VERSION "0.5"
 
 /* ***** INVARIANTS ***** */
-/** @brief 1500 is the max length. 2048 gigantic frames are rarely used*/
+/** @brief 1500 is the max length.*/
 #define ETH_FRAME_LENGTH 1500
 /** @brief Ethernet header length*/
 #define ETH_HEADER_LENGTH 14
 #define IP_HEADER_POS 35
 #define TCPUDP_HEADER_POS 44
-//the magic number or CRC32 residue, is 0xC704DD7B.
 #define FCS_LENGTH 4
 
 
@@ -136,30 +135,29 @@ int set_ethPromisc(char net[8], struct ifreq ethr, int sck, int mode) {
 
 
 /** @brief Check FCS */
-void fcsDecoder(char fb[], int n) {
+void fcsDecoder(char fb[1522], int n) {
 
-    char ffb[4] = "";
-    strncat(ffb, &fb[n-4], 4);
-//    strcat(ffb, fb[n-2]);
-//    strcat(ffb, fb[n-1]);
-//    strcat(ffb, fb[n]);
-    printf("FCS=%04x", ffb);
+    char ffb[FCS_LENGTH] = "";
+    int k = n-(FCS_LENGTH);
+
+    strncat(ffb, &fb[k], FCS_LENGTH);
+    printf("FCS=0x%08x", ffb);
 }
 
 
 
 /** @brief Decode MAC addresses*/
-void macDecoder(unsigned char *etherhead) {
+void macDecoder(unsigned char *eframe) {
 
 // Print MAC Addresses in order -
 // - destination MAC address
     printf("dMAC=%02x:%02x:%02x:%02x:%02x:%02x",
-        etherhead[0],etherhead[1],etherhead[2],
-        etherhead[3],etherhead[4],etherhead[5]);
+        eframe[0],eframe[1],eframe[2],
+        eframe[3],eframe[4],eframe[5]);
 // - source MAC address
     printf(", sMAC=%02x:%02x:%02x:%02x:%02x:%02x",
-        etherhead[6],etherhead[7],etherhead[8],
-        etherhead[9],etherhead[10],etherhead[11]);
+        eframe[6],eframe[7],eframe[8],
+        eframe[9],eframe[10],eframe[11]);
 } // macDecoder()
 
 
@@ -168,12 +166,12 @@ void frameTypeDecoder(int b) {
     if (b <= __ETH_PROTOCOL_SWITCH__) {
         // brand = 0..1500 decimal --> length field of IEEE 802.3
         // 10Mbit/sec
-        printf(", 10baseT   LF=0x%04x ", b);
+        printf(", 10baseT   LF=0x%08x ", b);
     }
     else {
         // brand > 1500 decimal --> type field of Ethernet II
         // 100Mbit/sec
-        printf(", 1000baseT TF=0x%04x ", b);
+        printf(", 1000baseT TF=0x%08x ", b);
     }
 } // frameTypeDecoder()
 
@@ -245,7 +243,7 @@ void sigproc();
 int main(int argc, char *argv[]) {
 
     /* Declare and initialize variables */
-    unsigned char *ethhead, *prothead;
+    unsigned char *ethframe, *prothead;
     unsigned char frmbuf[ETH_FRAME_LENGTH];
     int brand = 0;
     int sock = 0;
@@ -261,6 +259,9 @@ int main(int argc, char *argv[]) {
     struct ifreq ethreq;
 
     printf("Initializing Etherframe %s ...\n", ETHERFRAME_VERSION);
+    printf("DISCLAIMER: IT IS ADVISED TO NOT USE THIS PROGRAM YET AS IT IS WORK IN PROGRESS.\n");
+    printf("THIS PROGRAM IS BEST USED IN CONJUNCTION WITH THE ETHTOOL PROGRAM,\n");
+    printf("WHICH PROVIDES MEANS TO MANIPULATE NIC FEATURE CONFIGURATION BITS.\n");
     printf("Copyright (c) 2018, Valerio Bellizzomi\n");
     printf("Etherframe is free software and comes with ABSOLUTELY NO WARRANTY. See Makefile for details.\n");
     printf("Warning! Usage requires root user.");
@@ -310,14 +311,14 @@ int main(int argc, char *argv[]) {
 
         /** @brief Main loop */
         while (1) {
-            frmbytes = recvfrom(sock, frmbuf, ETH_FRAME_LENGTH, 0, NULL, NULL);
+            frmbytes = recvfrom(sock, frmbuf, 1522, 0, NULL, NULL);
 
                 /*
                 CHECK TO SEE IF THE FRAME CONTAINS AT LEAST COMPLETE HEADERS:
                     * (a) Ethernet (14 bytes), pos 1-14,
                     * (b) IP (20 bytes), pos 15-35.
                     * (c) TCP/UDP/etc. (8 bytes), pos 36-44.
-                    * (d) Frame Check Sequence (2 bytes), pos 45-46.
+                    * (d) Frame Check Sequence (4 bytes), pos 45-48.
                */
 
 
@@ -355,30 +356,28 @@ int main(int argc, char *argv[]) {
                 /* COMPLETE FRAME WITH PAYLOAD */
                 if (frmbytes > ETH_HEADER_LENGTH) {
                     complfrm = complfrm + 1;
-                    ethhead = frmbuf;
-                    macDecoder(ethhead);
-                    printf(", FB=%i", frmbytes);
-                    brand = (ethhead[12]<<8) + ethhead[13]; // length field or type field
-                    // (ethhead[12]<<8)+ethhead[13] is the field.
+                    ethframe = frmbuf;
+                    macDecoder(ethframe);
+                    printf(", FB=%i, ", frmbytes);
+                    brand = (ethframe[12]<<8) + ethframe[13]; // length field or type field
+                    // (ethframe[12]<<8)+ethframe[13] is the field.
 
                     /*
                 Field mode :
                     <= 1500 decimal = length field = IEEE 802.3 = 10Mbps,
                     > 1500 decimal = type field = Ethernet II = 100Mbps/1000Mbps.
                 */
-                    fcsDecoder(frmbuf,frmbytes);
+                    fcsDecoder(ethframe,frmbytes);
                     frameTypeDecoder(brand);
-                    protocolDecoder(brand, prothead, frmbuf);
+                    protocolDecoder(brand, prothead, ethframe);
 
                     /* Display also packet payload data */
-                    for (i = 0; i < (frmbytes - 1); i++) { printf("%02x ", frmbuf[i]); };
+                    for (i = 0; i < (frmbytes - 1); i++) { printf("%02x ", ethframe[i]); };
                     printf("\n");
 
                 } //if (frmbytes > ETH_HEADER_LENGTH)
             } //if (frmbytes > 0)
 
-            // Provision for cable diagnostics: Compute frame statistics
-            // This is intended to catch signal attenuation and disturbing interference on long cables.
             CUR_COP = (complfrm + 1) / (totfrm + 1);
             LOST_COP = (incomplfrm + 1) / (totfrm + 1);
 
