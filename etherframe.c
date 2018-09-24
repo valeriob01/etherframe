@@ -78,7 +78,10 @@ Ethernet frame receiver with statistics. Supports the Preventive Maintenance Mod
 /* Protocol signatures */
 #include "signatures.h"
 
+    int frmbytes = 0;           // Number of bytes in a frame
+
 /** @brief Prints error strings*/
+
 
 void printError(char es[160]) {
     printf("Etherframe: %s\n", es);
@@ -241,10 +244,6 @@ void protocolDecoder(int b, unsigned char *protohead, unsigned char fb[ETH_FRAME
 } //protocolDecoder()
 
 
-#if 0
-void sigproc();
-#endif
-
 /** @brief Main*/
 int main(int argc, char *argv[]) {
 
@@ -253,7 +252,7 @@ int main(int argc, char *argv[]) {
     unsigned char frmbuf[ETH_FRAME_LENGTH];
     int brand = 0;
     int sock = 0;
-    int frmbytes = 0;           // Number of bytes in a frame
+
     long int totfrm = 0;        // Total number of frames
     long int complfrm = 0;      // Number of frames with complete headers
     long int incomplfrm = 0;    // Number of frames with incomplete headers
