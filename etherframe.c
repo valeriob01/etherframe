@@ -140,10 +140,11 @@ void fcsDecoder(char fb[1522], int n) {
     char ffb[FCS_LENGTH] = "";
     int k = n-(FCS_LENGTH);
 
-    ffb[1] = fb[n-4];
-    ffb[2] = fb[n-3] << 8;
-    ffb[3] = fb[n-2] << 16;
-    ffb[4] = fb[n-1] << 24;
+    ffb = fb[frmbytes-1] << 24 | fb[frmbytes-2] << 16 | fb[frmbytes-3] << 8 | fb[frmbytes-4];
+//    ffb[1] = fb[n-4];
+//    ffb[2] = fb[n-3] << 8;
+//    ffb[3] = fb[n-2] << 16;
+//    ffb[4] = fb[n-1] << 24;
     
 //    strncat(ffb, &fb[k], FCS_LENGTH);
     printf("FCS=0x%08x", ffb);
