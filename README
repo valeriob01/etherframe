@@ -23,14 +23,11 @@ Platforms:
 ----------
 Etherframe currently compile and run on Debian.
 
-The listnet program displays a list of network interface names.
-Usage:
-------
-./listnet
-
 You need to be logged in as root to run the program.
 Usage:
 ------
 ./etherframe [<interface name>] [<promiscuous mode>]
 
 Where <interface name> is a name from the listnet listing, and <promiscuous mode> is 0=disabled, 1=enabled.
+
+Without arguments the program lists network interfaces present on the system.
