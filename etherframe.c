@@ -323,7 +323,7 @@ int main(int argc, char *argv[]) {
     printf("Copyright (c) 2018, Valerio Bellizzomi\n");
     printf("Etherframe is free software and comes with ABSOLUTELY NO WARRANTY. See Makefile for details.\n");
     printf("Warning! Usage requires root user.\n");
-    printf("Usage: %s [eth0|eth1|eth2|eth3|lo]\n", argv[0]);
+    printf("Usage: %s [<interface name>] [0|1]\n", argv[0]);
 
 
     switch (argc) {
