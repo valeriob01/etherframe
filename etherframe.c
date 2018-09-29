@@ -44,9 +44,12 @@ Ethernet frame receiver with statistics. Supports the Preventive Maintenance Mod
 #include <sys/types.h>
 #include <sys/ioctl.h>
 #include <arpa/inet.h>
-#include <net/if.h>
+// #include <net/if.h>
 // #include <linux/in.h>
 #include <linux/if_ether.h>
+#include <ifaddrs.h>
+#include <linux/wireless.h>
+
 
 #define ETHERFRAME_VERSION "0.5"
 
@@ -85,6 +88,57 @@ Ethernet frame receiver with statistics. Supports the Preventive Maintenance Mod
 
 void printError(char es[160]) {
     printf("Etherframe: %s\n", es);
+}
+
+int check_wireless(const char* ifname, char* protocol) {
+  int sock = -1;
+  struct iwreq pwrq;
+  memset(&pwrq, 0, sizeof(pwrq));
+  strncpy(pwrq.ifr_name, ifname, IFNAMSIZ);
+
+  if ((sock = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
+    perror("socket");
+    return 0;
+  }
+
+  if (ioctl(sock, SIOCGIWNAME, &pwrq) != -1) {
+    if (protocol) strncpy(protocol, pwrq.u.name, IFNAMSIZ);
+    close(sock);
+    return 1;
+  }
+
+  close(sock);
+  return 0;
+}
+
+
+int listnet() {
+  struct ifaddrs *ifaddr, *ifa;
+
+  printf("\nListing network interfaces\n");
+
+  if (getifaddrs(&ifaddr) == -1) {
+    perror("getifaddrs");
+    return -1;
+  }
+
+  /* Walk through linked list, maintaining head pointer so we
+     can free list later */
+  for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next) {
+    char protocol[IFNAMSIZ]  = {0};
+
+    if (ifa->ifa_addr == NULL ||
+        ifa->ifa_addr->sa_family != AF_PACKET) continue;
+
+    if (check_wireless(ifa->ifa_name, protocol)) {
+      printf("interface %s is wireless: %s\n", ifa->ifa_name, protocol);
+    } else {
+      printf("interface %s is not wireless\n", ifa->ifa_name);
+    }
+  }
+
+  freeifaddrs(ifaddr);
+  return 0;
 }
 
 
@@ -257,7 +311,7 @@ int main(int argc, char *argv[]) {
     long int incomplfrm = 0;    // Number of frames with incomplete headers
     float CUR_COP =  __MAX_COP__;   // Current COP. Assume we have a good line
     float LOST_COP = __MIN_COP__;   // Missing COP. Assume we have a good line
-    int i = 0;
+    int i, j = 0;
     char *interface = "eth0";
     int promisc_mode = 1;
     struct ifreq ethreq;
@@ -268,13 +322,14 @@ int main(int argc, char *argv[]) {
     printf("WHICH PROVIDES MEANS TO MANIPULATE NIC FEATURE CONFIGURATION BITS.\n");
     printf("Copyright (c) 2018, Valerio Bellizzomi\n");
     printf("Etherframe is free software and comes with ABSOLUTELY NO WARRANTY. See Makefile for details.\n");
-    printf("Warning! Usage requires root user.");
+    printf("Warning! Usage requires root user.\n");
     printf("Usage: %s [eth0|eth1|eth2|eth3|lo]\n", argv[0]);
 
 
     switch (argc) {
         case 1:
-            printf("Selecting default interface %s\n", interface);
+            j = listnet();
+            return 0;
             break;
         case 2:
             interface = argv[1];

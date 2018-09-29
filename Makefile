@@ -53,9 +53,6 @@ install:
 	fi;
 	cp $(TARGETS) $(HOME)/bin/$(TARGETS)
 
-listnet:
-	$(CC) $(CFLAGS) -o listnet $(BUILDDIR)/listnet.c
-
 clean:
 	rm -f $(TARGETS)
 	rm -f $(BUILDDIR)/html/*
