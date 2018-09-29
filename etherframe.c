@@ -329,7 +329,7 @@ int main(int argc, char *argv[]) {
     switch (argc) {
         case 1:
             j = listnet();
-            return 0;
+            return j;
             break;
         case 2:
             interface = argv[1];
