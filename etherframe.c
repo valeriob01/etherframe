@@ -194,13 +194,13 @@ int set_ethPromisc(char net[8], struct ifreq ethr, int sck, int mode) {
 /** @brief Check FCS */
 void fcsDecoder(char fb[1522], int n) {
 
-    char ffb[FCS_LENGTH] = "";
+    unsigned int ffb[FCS_LENGTH] = 0;
     int k = n-FCS_LENGTH;
 
-    ffb[1] = fb[n-3];
-    ffb[2] = fb[n-2];
-    ffb[3] = fb[n-1];
-    ffb[4] = fb[n];
+    ffb[0] = fb[n-3];
+    ffb[1] = fb[n-2];
+    ffb[2] = fb[n-1];
+    ffb[3] = fb[n];
     
     strncat(ffb, &fb[k], FCS_LENGTH);
     printf("FCS=0x%08x", ffb);
@@ -306,11 +306,9 @@ int main(int argc, char *argv[]) {
     int brand = 0;
     int sock = 0;
 
-    long int totfrm = 0;        // Total number of frames
-    long int complfrm = 0;      // Number of frames with complete headers
-    long int incomplfrm = 0;    // Number of frames with incomplete headers
-    float CUR_COP =  __MAX_COP__;   // Current COP. Assume we have a good line
-    float LOST_COP = __MIN_COP__;   // Missing COP. Assume we have a good line
+    int totfrm = 0;        // Total number of frames
+    int complfrm = 0;      // Number of frames with complete headers
+    int incomplfrm = 0;    // Number of frames with incomplete headers
     int i, j = 0;
     char *interface = "eth0";
     int promisc_mode = 1;
@@ -370,6 +368,9 @@ int main(int argc, char *argv[]) {
 
         /** @brief Main loop */
         while (1) {
+    float CUR_COP =  __MAX_COP__;   // Current COP. Assume we have a good line
+    float LOST_COP = __MIN_COP__;   // Missing COP. Assume we have a good line
+
             frmbytes = recvfrom(sock, frmbuf, 1522, 0, NULL, NULL);
 
                 /*
@@ -442,10 +443,10 @@ int main(int argc, char *argv[]) {
 
             // Display full statistics report. Introduced for support of Preventive Maintenance Model.
             if (CUR_COP >= __DEFAULT_ROP__) {
-                printf("  T=%i C=%i I=%i COP=%08f LOST=%08f ROP=%08f\n", totfrm, complfrm, incomplfrm, CUR_COP, LOST_COP, __DEFAULT_ROP__);
+                printf("  T=%d C=%d I=%d COP=%08f LOST=%08f ROP=%08f\n", totfrm, complfrm, incomplfrm, CUR_COP, LOST_COP, __DEFAULT_ROP__);
             }
             else {
-                printf("  T=%i C=%i I=%i COP=%08f LOST=%08f ROP=%08f *NO-ROP*\n", totfrm, complfrm, incomplfrm, CUR_COP, LOST_COP, __DEFAULT_ROP__);
+                printf("  T=%d C=%d I=%d COP=%08f LOST=%08f ROP=%08f *NO-ROP*\n", totfrm, complfrm, incomplfrm, CUR_COP, LOST_COP, __DEFAULT_ROP__);
             }
 
 
