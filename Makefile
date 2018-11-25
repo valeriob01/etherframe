@@ -56,7 +56,7 @@ install:
 clean:
 	rm -f $(TARGETS)
 	rm -f $(BUILDDIR)/html/*
-	rm -rf $(BUILDDIR)/html
+	rm -f $(BUILDDIR)/html
 	rm -f $(TARGETS).tgz
 	rm -f $(TARGETS)-$(VERSION).tgz
 
