@@ -194,7 +194,7 @@ int set_ethPromisc(char net[8], struct ifreq ethr, int sck, int mode) {
 /** @brief Check FCS */
 void fcsDecoder(char fb[1522], int n) {
 
-    unsigned int ffb[FCS_LENGTH] = 0;
+    unsigned int ffb[FCS_LENGTH];
     int k = n-FCS_LENGTH;
 
     ffb[0] = fb[n-3];
@@ -202,7 +202,7 @@ void fcsDecoder(char fb[1522], int n) {
     ffb[2] = fb[n-1];
     ffb[3] = fb[n];
     
-    strncat(ffb, &fb[k], FCS_LENGTH);
+//    strncat(ffb, &fb[k], FCS_LENGTH);
     printf("FCS=0x%08x", ffb);
 }
 
